@@ -2,10 +2,10 @@ const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { createToken } = require("../helpers/userHelper");
-const { UserVerificationModel } = require("../userVerificationModel");
+const { UserVerificationModel } = require("../models/userVerificationModel");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
-const { config } = require("../config/secret")
+const { config } = require("../config/secret.js")
 
 
 let transporter = nodemailer.createTransport({
