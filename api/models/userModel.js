@@ -1,4 +1,3 @@
-const { string } = require("joi");
 const mongoose = require("mongoose");
 
 let userSchema = new mongoose.Schema({
@@ -14,7 +13,8 @@ let userSchema = new mongoose.Schema({
   // role of the user if regular user or admin
   role: {
     type: String, default: "user"
-  }
+  },
+  verified: Boolean
 })
 
 exports.UserModel = mongoose.model("users", userSchema);
