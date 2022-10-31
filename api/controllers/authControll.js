@@ -2,6 +2,30 @@ const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { createToken } = require("../helpers/userHelper");
+const { UserVerificationModel } = require("../userVerificationModel");
+const nodemailer = require("nodemailer");
+const { v4: uuidv4 } = require("uuid");
+const { config } = require("../config/secret")
+
+
+let transporter = nodemailer.createTransport({
+  service:"gmail",
+  auth :{
+    user:config.authEmail,
+    pass:config.authPass
+  }
+})
+
+transporter.verify((error,success) => { 
+  if(error){
+    console.log(error);
+  }else{
+    console.log("ready for messages");
+    console.log("success");
+
+  }
+  
+})
 
 exports.authCtrl = {
   signUp: async (req, res) => {
