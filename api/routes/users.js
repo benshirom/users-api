@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.post("/", authCtrl.signUp)
 router.post("/login", authCtrl.login)
-
+router.get("/verify/:userID/:uniqueString",authCtrl.verifyUser)
+router.get("/verified",authCtrl.verifiedUser)
 router.get("/myInfo", auth, userCtrl.myInfo)
 router.delete("/:delId", auth, userCtrl.deleteUser)
 router.get("/usersList", authAdmin, userCtrl.userList)

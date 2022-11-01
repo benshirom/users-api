@@ -6,7 +6,10 @@ const { UserVerificationModel } = require("../models/userVerificationModel");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const { config } = require("../config/secret.js");
+const path = require("path");
 const { result } = require("lodash");
+const { date } = require("joi");
+const { userInfo } = require("os");
 
 
 let transporter = nodemailer.createTransport({
@@ -28,7 +31,6 @@ transporter.verify((error, success) => {
   } else {
     console.log("ready for messages");
     console.log("success");
-
   }
 
 })
@@ -55,22 +57,22 @@ const sendVerificationEmail = ({ _id, _email }, res) => {
       });
       UserVerification
         .save()
-        .then(() => { 
+        .then(() => {
           transporter
-          .sendMail(mailOptions)
-          .then(() => { 
-            res.json({
-              status: "pending",
-              message: "verification email sent",
-            });
-          })
-          .catch((error) => {
-            console.log(error)
-            res.json({
-              status: "failed",
-              message: "verification email failed",
-            });
-          })
+            .sendMail(mailOptions)
+            .then(() => {
+              res.json({
+                status: "pending",
+                message: "verification email sent",
+              });
+            })
+            .catch((error) => {
+              console.log(error)
+              res.json({
+                status: "failed",
+                message: "verification email failed",
+              });
+            })
         })
         .catch((error) => {
           console.log(error)
@@ -81,12 +83,12 @@ const sendVerificationEmail = ({ _id, _email }, res) => {
         })
 
     })
-      .catch(() => {
-        res.json({
-          status: "failed",
-          message: "an error occurre",
-        });
-      })
+    .catch(() => {
+      res.json({
+        status: "failed",
+        message: "an error occurre",
+      });
+    })
 };
 
 exports.authCtrl = {
@@ -120,11 +122,13 @@ exports.authCtrl = {
     try {
       let user = await UserModel.findOne({ email: req.body.email })
       if (!user) {
-        return res.status(401).json({ msg: "Password or email is worng ,code:1" })
+        return res.status(401).json({status: "failed", msg: "Password or email is worng ,code:1" })
+      }else if(!user.verified){
+        return res.status(401).json({status: "failed",msg: "Email hasnt been verified yet. check your inbox. " });
       }
       let authPassword = await bcrypt.compare(req.body.password, user.password);
       if (!authPassword) {
-        return res.status(401).json({ msg: "Password or email is worng ,code:2" });
+        return res.status(401).json({status: "failed", msg: "Password or email is worng ,code:2" });
       }
       let token = createToken(user._id, user.role);
       res.json({ token });
@@ -133,5 +137,88 @@ exports.authCtrl = {
       console.log(err)
       res.status(500).json({ msg: "err", err })
     }
+  },
+  verifyUser: async (req, res) => {
+    let { userId, uniqueString } = req.params;
+    UserVerificationModel
+      .find({ userId })
+      .then((result) => {
+        if (result.length > 0) {
+
+          const { expiresAt } = result[0];
+
+          const hashedUniqueString = result[0].uniqueString;
+          if (expiresAt < date.now()) {
+            UserVerificationModel
+              .deleteone({ userID })
+              .then(result => {
+                user
+                  .deleteone({ _id: userId })
+                  .then(() => {
+                    let message = "link hsa expired.please sigh up again ";
+                    res.redirect(`/user/verified/error=true&message=${message}`);
+                  })
+                  .catch((error) => {
+                    let message = "clearing user with expired unique string failed ";
+                    res.redirect(`/user/verified/error=true&message=${message}`);
+                  })
+              })
+              .catch((error) => {
+                console.log(error);
+                let message = "an error occurre while clearing  expired user verification record";
+                res.redirect(`/user/verified/error=true&message=${message}`);
+              })
+          }
+          else {
+            bcrypt
+              .compare(uniqueString, hashedUniqueString)
+              .then(result => {
+                if (result) {
+                  UserVerificationModel
+                  .updateOne({_id:userId},{verified:true})
+                  .then(() => { 
+                    UserVerificationModel
+                    .deleteOne({userId})
+                    .then(() => { 
+                      res.sendFile(path.join(__dirname,"./../views/verified.html"));
+                    })
+                    .catch(error => {
+                      console.log(error)
+                      let message = "an error occurre while finalizing sucssful verification  ";
+                      res.redirect(`/user/verified/error=true&message=${message}`);
+                    })
+                    }
+                  )
+                  .catch(error => {
+                    console.log(error)
+                    let message = "an error occurre while updating user verified ";
+                    res.redirect(`/user/verified/error=true&message=${message}`);
+                  })
+
+                }else {
+                  let message = "invalid verification details passed.check your inbox.";
+                  res.redirect(`/user/verified/error=true&message=${message}`);
+                }
+              })
+              .catch((error) => {
+                console.log(error)
+                let message = "an error occurre while compering unique strings ";
+                res.redirect(`/user/verified/error=true&message=${message}`);
+              })
+          }
+
+        } else {
+          let message = "Account   doesnt exist or has been verified already.please sign up or login in.";
+          res.redirect(`/user/verified/error=true&message=${message}`);
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        let message = "an error occurre while checking for existing user Verification record ";
+        res.redirect(`/user/verified/error=true&message=${message}`);
+      })
+  },
+  verifiedUser: async (req, res) => {
+    res.sendFile(path.join(__dirname, "../views/verified.html"))
   }
 }
