@@ -62,18 +62,9 @@ const sendVerificationEmail = ({_id, email} , res) => {
         .then(() => {
           transporter
             .sendMail(mailOptions)
-            .then(() => {
-              // res.json({
-              //   status: "pending",
-              //   message: "verification email sent",
-              // });
-            })
             .catch((error) => {
-              // // console.log(error)
-              // res.json({
-              //   status: "failed",
-              //   message: "verification email failed",
-              // });
+              // console.log(error)
+              res.status(401).json({status: "failed", msg: "cant send email ,code:1" })
             })
         })
         .catch((error) => {
@@ -154,7 +145,7 @@ exports.authCtrl = {
             UserVerificationModel
               .deleteone({ userId })
               .then(result => {
-                user
+                UserModel
                   .deleteone({ _id: userId })
                   .then(() => {
                     let message = "link hsa expired.please sigh up again ";
@@ -176,7 +167,7 @@ exports.authCtrl = {
               .compare(uniqueString, hashedUniqueString)
               .then(result => {
                 if (result) {
-                  UserVerificationModel
+                  UserModel
                   .updateOne({_id:userId},{verified:true})
                   .then(() => { 
                     UserVerificationModel
