@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const { config } = require("../config/secret.js");
 const path = require("path");
-const { result } = require("lodash");
+// const { result } = require("lodash");
 const { date } = require("joi");
 const { userInfo } = require("os");
 
@@ -21,7 +21,7 @@ let transporter = nodemailer.createTransport({
     user: config.authEmail,
     pass: config.authPass
   }
-})
+},[])
 
 transporter.verify((error, success) => {
   if (error) {
@@ -35,15 +35,17 @@ transporter.verify((error, success) => {
 
 })
 
-const sendVerificationEmail = async({ _id, _email }, res) => {
+const sendVerificationEmail = ({_id, email} , res) => {
+  console.log(email)
+  console.log(_id)
   const currentUrl = "http://localhost:27017/"
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
     from: config.authEmail,
-    to: _email,
+    to: email,
     subject: "Verify Your Email",
-    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl + "users/verify" + _id + "/" + uniqueString}> here</a> </p>`
+    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl + "users/verify/" + _id + "/" + uniqueString}> here</a> </p>`
   };
   const salRounds = 10;
   bcrypt
@@ -61,17 +63,17 @@ const sendVerificationEmail = async({ _id, _email }, res) => {
           transporter
             .sendMail(mailOptions)
             .then(() => {
-              res.json({
-                status: "pending",
-                message: "verification email sent",
-              });
+              // res.json({
+              //   status: "pending",
+              //   message: "verification email sent",
+              // });
             })
             .catch((error) => {
-              console.log(error)
-              res.json({
-                status: "failed",
-                message: "verification email failed",
-              });
+              // // console.log(error)
+              // res.json({
+              //   status: "failed",
+              //   message: "verification email failed",
+              // });
             })
         })
         .catch((error) => {
@@ -100,9 +102,9 @@ exports.authCtrl = {
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
-      user.password = "***";
-      await sendVerificationEmail(result, res);
       await user.save();
+      user.password = "***";
+      sendVerificationEmail(user,res);
       res.status(201).json(user);
     }
     catch (err) {
@@ -148,9 +150,9 @@ exports.authCtrl = {
           const { expiresAt } = result[0];
 
           const hashedUniqueString = result[0].uniqueString;
-          if (expiresAt < date.now()) {
+          if (expiresAt < Date.now()) {
             UserVerificationModel
-              .deleteone({ userID })
+              .deleteone({ userId })
               .then(result => {
                 user
                   .deleteone({ _id: userId })
