@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 let userVerificationSchema = new mongoose.Schema({
-  fullName: String,
+  userId: String,
   uniqueString: String,
   createdAt: Date,
   expiresAt: Date,

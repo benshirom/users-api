@@ -5,27 +5,89 @@ const { createToken } = require("../helpers/userHelper");
 const { UserVerificationModel } = require("../models/userVerificationModel");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
-const { config } = require("../config/secret.js")
+const { config } = require("../config/secret.js");
+const { result } = require("lodash");
 
 
 let transporter = nodemailer.createTransport({
-  service:"gmail",
-  auth :{
-    user:config.authEmail,
-    pass:config.authPass
+
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // use SSL
+  auth: {
+    user: config.authEmail,
+    pass: config.authPass
   }
 })
 
-transporter.verify((error,success) => { 
-  if(error){
+transporter.verify((error, success) => {
+  if (error) {
     console.log(error);
-  }else{
+    console.log(config.authEmail);
+    console.log(config.authPass);
+  } else {
     console.log("ready for messages");
     console.log("success");
 
   }
-  
+
 })
+
+const sendVerificationEmail = ({ _id, _email }, res) => {
+  const currentUrl = "http://localhost:3000/"
+  const uniqueString = uuidv4() + _id;
+
+  const mailOptions = {
+    from: config.authEmail,
+    to: _email,
+    subject: "Verify Your Email",
+    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl + "users/verify" + _id + "/" + uniqueString}> here</a> </p>`
+  };
+  const salRounds = 10;
+  bcrypt
+    .hash(uniqueString, salRounds)
+    .then((hasheduniqueString) => {
+      const UserVerification = new UserVerificationModel({
+        userId: _id,
+        uniqueString: hasheduniqueString,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 21600000,
+      });
+      UserVerification
+        .save()
+        .then(() => { 
+          transporter
+          .sendMail(mailOptions)
+          .then(() => { 
+            res.json({
+              status: "pending",
+              message: "verification email sent",
+            });
+          })
+          .catch((error) => {
+            console.log(error)
+            res.json({
+              status: "failed",
+              message: "verification email failed",
+            });
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          res.json({
+            status: "failed",
+            message: "an error  cant save",
+          });
+        })
+
+    })
+      .catch(() => {
+        res.json({
+          status: "failed",
+          message: "an error occurre",
+        });
+      })
+};
 
 exports.authCtrl = {
   signUp: async (req, res) => {
@@ -38,6 +100,7 @@ exports.authCtrl = {
       user.password = await bcrypt.hash(user.password, 10);
       await user.save();
       user.password = "***";
+      await sendVerificationEmail(result, res);
       res.status(201).json(user);
     }
     catch (err) {

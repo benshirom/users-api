@@ -14,7 +14,7 @@ let userSchema = new mongoose.Schema({
   role: {
     type: String, default: "user"
   },
-  verified: Boolean
+  verified: Boolean, default:false
 })
 
 exports.UserModel = mongoose.model("users", userSchema);
