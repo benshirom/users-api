@@ -35,8 +35,8 @@ transporter.verify((error, success) => {
 
 })
 
-const sendVerificationEmail = ({ _id, _email }, res) => {
-  const currentUrl = "http://localhost:3000/"
+const sendVerificationEmail = async({ _id, _email }, res) => {
+  const currentUrl = "http://localhost:27017/"
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
@@ -100,9 +100,9 @@ exports.authCtrl = {
     try {
       let user = new UserModel(req.body);
       user.password = await bcrypt.hash(user.password, 10);
-      await user.save();
       user.password = "***";
       await sendVerificationEmail(result, res);
+      await user.save();
       res.status(201).json(user);
     }
     catch (err) {
