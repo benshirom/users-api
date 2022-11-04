@@ -124,7 +124,12 @@ exports.authCtrl = {
         return res.status(401).json({ status: "failed", msg: "Password or email is worng ,code:2" });
       }
       let token = createToken(user._id, user.role);
-      res.json({ token });
+      let data = {
+        token: token,
+        userRole: user.role
+
+      }
+      res.json(data);
     }
     catch (err) {
       console.log(err)
