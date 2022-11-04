@@ -38,14 +38,14 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = ({ _id, email }, res) => {
   console.log(email)
   console.log(_id)
-  const currentUrl = "http://localhost:27017/"
+  const currentUrl = "http://localhost:27017/";
   const uniqueString = uuidv4() + _id;
-
+console.log("ccc");
   const mailOptions = {
     from: config.authEmail,
     to: email,
     subject: "Verify Your Email",
-    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl + "users/verify/" + _id + "/" + uniqueString}> here</a> </p>`
+    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
   };
   const salRounds = 10;
   bcrypt
@@ -57,6 +57,7 @@ const sendVerificationEmail = ({ _id, email }, res) => {
         createdAt: Date.now(),
         expiresAt: Date.now() + 21600000,
       });
+      console.log(UserVerification);
       UserVerification
         .save()
         .then(() => {
