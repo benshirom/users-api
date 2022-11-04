@@ -38,7 +38,7 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = ({ _id, email }, res) => {
   console.log(email)
   console.log(_id)
-  const currentUrl = "http://localhost:27017/"
+  const currentUrl = "https://super-tan-rhinoceros.cyclic.app"
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
