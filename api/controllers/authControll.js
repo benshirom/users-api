@@ -40,7 +40,7 @@ const sendVerificationEmail = ({ _id, email }, res) => {
   console.log(_id)
   const currentUrl = "http://localhost:27017/";
   const uniqueString = uuidv4() + _id;
-console.log("ccc");
+
   const mailOptions = {
     from: config.authEmail,
     to: email,
@@ -57,7 +57,6 @@ console.log("ccc");
         createdAt: Date.now(),
         expiresAt: Date.now() + 21600000,
       });
-      console.log(UserVerification);
       UserVerification
         .save()
         .then(() => {
