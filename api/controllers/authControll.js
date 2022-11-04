@@ -21,7 +21,7 @@ let transporter = nodemailer.createTransport({
     user: config.authEmail,
     pass: config.authPass
   }
-},[])
+}, [])
 
 transporter.verify((error, success) => {
   if (error) {
@@ -35,7 +35,7 @@ transporter.verify((error, success) => {
 
 })
 
-const sendVerificationEmail = ({_id, email} , res) => {
+const sendVerificationEmail = ({ _id, email }, res) => {
   console.log(email)
   console.log(_id)
   const currentUrl = "http://localhost:27017/"
@@ -64,7 +64,7 @@ const sendVerificationEmail = ({_id, email} , res) => {
             .sendMail(mailOptions)
             .catch((error) => {
               // console.log(error)
-              res.status(401).json({status: "failed", msg: "cant send email ,code:1" })
+              res.status(401).json({ status: "failed", msg: "cant send email ,code:1" })
             })
         })
         .catch((error) => {
@@ -95,7 +95,7 @@ exports.authCtrl = {
       user.password = await bcrypt.hash(user.password, 10);
       await user.save();
       user.password = "***";
-      sendVerificationEmail(user,res);
+      sendVerificationEmail(user, res);
       res.status(201).json(user);
     }
     catch (err) {
@@ -115,13 +115,13 @@ exports.authCtrl = {
     try {
       let user = await UserModel.findOne({ email: req.body.email })
       if (!user) {
-        return res.status(401).json({status: "failed", msg: "Password or email is worng ,code:1" })
-      }else if(!user.verified){
-        return res.status(401).json({status: "failed",msg: "Email hasnt been verified yet. check your inbox. " });
+        return res.status(401).json({ status: "failed", msg: "Password or email is worng ,code:1" })
+      } else if (!user.verified) {
+        return res.status(401).json({ status: "failed", msg: "Email hasnt been verified yet. check your inbox. " });
       }
       let authPassword = await bcrypt.compare(req.body.password, user.password);
       if (!authPassword) {
-        return res.status(401).json({status: "failed", msg: "Password or email is worng ,code:2" });
+        return res.status(401).json({ status: "failed", msg: "Password or email is worng ,code:2" });
       }
       let token = createToken(user._id, user.role);
       res.json({ token });
@@ -168,27 +168,27 @@ exports.authCtrl = {
               .then(result => {
                 if (result) {
                   UserModel
-                  .updateOne({_id:userId},{verified:true})
-                  .then(() => { 
-                    UserVerificationModel
-                    .deleteOne({userId})
-                    .then(() => { 
-                      res.sendFile(path.join(__dirname,"./../views/verified.html"));
-                    })
+                    .updateOne({ _id: userId }, { verified: true })
+                    .then(() => {
+                      UserVerificationModel
+                        .deleteOne({ userId })
+                        .then(() => {
+                          res.sendFile(path.join(__dirname, "./../views/verified.html"));
+                        })
+                        .catch(error => {
+                          console.log(error)
+                          let message = "an error occurre while finalizing sucssful verification  ";
+                          res.redirect(`/user/verified/error=true&message=${message}`);
+                        })
+                    }
+                    )
                     .catch(error => {
                       console.log(error)
-                      let message = "an error occurre while finalizing sucssful verification  ";
+                      let message = "an error occurre while updating user verified ";
                       res.redirect(`/user/verified/error=true&message=${message}`);
                     })
-                    }
-                  )
-                  .catch(error => {
-                    console.log(error)
-                    let message = "an error occurre while updating user verified ";
-                    res.redirect(`/user/verified/error=true&message=${message}`);
-                  })
 
-                }else {
+                } else {
                   let message = "invalid verification details passed.check your inbox.";
                   res.redirect(`/user/verified/error=true&message=${message}`);
                 }
