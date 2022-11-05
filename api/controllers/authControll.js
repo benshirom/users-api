@@ -41,7 +41,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
   const uniqueString = uuidv4() + _id;
-  
+  let mail=mailOptions(_id,uniqueString);
   // const mailOptions = {
     //   from: config.authEmail,
     //   to: email,
@@ -59,7 +59,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
        UserVerification
         .save()
         .then(() => {
-          transporter.sendMail(mailOptions(_id,uniqueString),(err,info) => { 
+          transporter.sendMail(mail,(err,info) => { 
             if (err) {
               console.log(err);
             }
