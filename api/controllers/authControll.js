@@ -21,7 +21,7 @@ let transporter = nodemailer.createTransport({
     user: config.authEmail,
     pass: config.authPass
   }
-}, [])
+});
 
 transporter.verify((error, success) => {
   if (error) {
