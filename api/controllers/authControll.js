@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const { config } = require("../config/secret.js");
-const { createToken,mailOptions } = require("../helpers/userHelper");
+const { createToken, mailOptions } = require("../helpers/userHelper");
 const { UserModel } = require("../models/userModel");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { UserVerificationModel } = require("../models/userVerificationModel");
@@ -15,7 +15,7 @@ const salRounds = 10;
 
 
 let transporter = nodemailer.createTransport({
-  
+
   host: 'smtp.gmail.com',
   port: 465,
   secure: true, // use SSL
@@ -34,42 +34,34 @@ transporter.verify((error, success) => {
     console.log("ready for messages");
     console.log("success");
   }
-  
+
 })
 
-const sendVerificationEmail = async({ _id, email }, res) => {
-  console.log("email "+email)
-  console.log("id "+_id)
+const sendVerificationEmail = async ({ _id, email }, res) => {
+  console.log("email " + email)
+  console.log("id " + _id)
   const uniqueString = uuidv4() + _id;
-  let mail=mailOptions(_id,uniqueString,email);
-  // const mailOptions = {
-    //   from: config.authEmail,
-    //   to: email,
-    //   subject: "Verify Your Email",
-    //   html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
-    // };
-    await bcrypt
+  // let mail=mailOptions(_id,uniqueString,email);
+
+  await bcrypt
     .hash(uniqueString, salRounds)
     .then((hasheduniqueString) => {
-      
+
       const UserVerification = new UserVerificationModel({
         userId: _id,
         uniqueString: hasheduniqueString,
       });
-       UserVerification
+      UserVerification
         .save()
         .then(() => {
-          transporter.sendMail(mail,(err,info) => { 
+          transporter.sendMail(mailOptions(_id, uniqueString, email), (err, info) => {
             if (err) {
               console.log(err);
             }
             console.log('Message sent: %s', info.response);
-            
+
           })
-          // .catch((error) => {
-          //     // console.log(error)
-          //     res.status(401).json({ status: "failed", msg: "cant send email ,code:1" })
-          //   })
+
         })
         .catch((error) => {
           console.log(error)
