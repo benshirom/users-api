@@ -8,6 +8,7 @@ const { UserModel } = require("../models/userModel");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { UserVerificationModel } = require("../models/userVerificationModel");
 const { validVerifyUser} = require("../validation/userVerifyValidation");
+// export const API_URL = 'http://localhost:27017'
 
 
 
@@ -37,7 +38,7 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
-  const currentUrl = "https://super-tan-rhinoceros.cyclic.app";
+  const currentUrl = "http://localhost:27017";
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
