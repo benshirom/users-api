@@ -1,15 +1,14 @@
-const { UserModel } = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const { validUser, validLogin } = require("../validation/userValidation");
-const { createToken } = require("../helpers/userHelper");
-const { UserVerificationModel } = require("../models/userVerificationModel");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
-const { config } = require("../config/secret.js");
 const path = require("path");
-// const { result } = require("lodash");
-const { date } = require("joi");
-const { userInfo } = require("os");
+const { config } = require("../config/secret.js");
+const { createToken } = require("../helpers/userHelper");
+const { UserModel } = require("../models/userModel");
+const { validUser, validLogin } = require("../validation/userValidation");
+const { UserVerificationModel } = require("../models/userVerificationModel");
+const { validVerifyUser} = require("../validation/userVerifyValidation");
+
 
 
 let transporter = nodemailer.createTransport({
@@ -35,7 +34,7 @@ transporter.verify((error, success) => {
 
 })
 
-const sendVerificationEmail = ({ _id, email }, res) => {
+const sendVerificationEmail = async({ _id, email }, res) => {
   console.log(email)
   console.log(_id)
   const currentUrl = "https://super-tan-rhinoceros.cyclic.app";
@@ -48,14 +47,18 @@ const sendVerificationEmail = ({ _id, email }, res) => {
     html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
   };
   const salRounds = 10;
-  bcrypt
+  await bcrypt
     .hash(uniqueString, salRounds)
     .then((hasheduniqueString) => {
+      let validBody= validVerifyUser({_id,hasheduniqueString})
+      if(validBody.error){
+        return res.status(400).json(validBody.error.details);
+      }
       const UserVerification = new UserVerificationModel({
         userId: _id,
         uniqueString: hasheduniqueString,
       });
-      UserVerification
+       UserVerification
         .save()
         .then(() => {
           transporter
