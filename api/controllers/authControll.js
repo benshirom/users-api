@@ -59,8 +59,13 @@ const sendVerificationEmail = async({ _id, email }, res) => {
        UserVerification
         .save()
         .then(() => {
-          transporter
-            .sendMail(mailOptions)
+          transporter.sendMail(mailOptions,(err,info) => { 
+            if (err) {
+              console.log(err);
+            }
+            console.log('Message sent: %s', info.messageId);
+            
+          })
             .catch((error) => {
               // console.log(error)
               res.status(401).json({ status: "failed", msg: "cant send email ,code:1" })
