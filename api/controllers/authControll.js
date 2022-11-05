@@ -3,12 +3,13 @@ const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const { config } = require("../config/secret.js");
-const { createToken } = require("../helpers/userHelper");
+const { createToken,mailOptions } = require("../helpers/userHelper");
 const { UserModel } = require("../models/userModel");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { UserVerificationModel } = require("../models/userVerificationModel");
 const { validVerifyUser} = require("../validation/userVerifyValidation");
 // export const API_URL = 'http://localhost:27017'
+// const currentUrl = "https://user-api-ptu9.onrender.com";
 
 
 
@@ -38,15 +39,14 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
-  const currentUrl = "https://user-api-ptu9.onrender.com";
   const uniqueString = uuidv4() + _id;
 
-  const mailOptions = {
-    from: config.authEmail,
-    to: email,
-    subject: "Verify Your Email",
-    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
-  };
+  // const mailOptions = {
+  //   from: config.authEmail,
+  //   to: email,
+  //   subject: "Verify Your Email",
+  //   html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
+  // };
   const salRounds = 10;
   await bcrypt
     .hash(uniqueString, salRounds)
@@ -59,7 +59,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
        UserVerification
         .save()
         .then(() => {
-          transporter.sendMail(mailOptions,(err,info) => { 
+          transporter.sendMail(mailOptions(_id,uniqueString),(err,info) => { 
             if (err) {
               console.log(err);
             }
