@@ -6,10 +6,10 @@ exports.createToken = (_id, role) => {
   return token;
 }
 
-exports.mailOptions = (_id,_uniqueString) => {
+exports.mailOptions = (_id,_uniqueString,_email) => {
   const mailOptions = {
     from: config.authEmail,
-    to: email,
+    to: _email,
     subject: "Verify Your Email",
     html: `<p>Verify Your Email </p><p> click <a href=${config.currentUrl+"/users/verify/"+_id+"/"+_uniqueString}> here</a> </p>`
   };

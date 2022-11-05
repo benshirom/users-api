@@ -41,7 +41,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
   const uniqueString = uuidv4() + _id;
-  let mail=mailOptions(_id,uniqueString);
+  let mail=mailOptions(_id,uniqueString,email);
   // const mailOptions = {
     //   from: config.authEmail,
     //   to: email,
@@ -63,7 +63,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
             if (err) {
               console.log(err);
             }
-            console.log('Message sent: %s', info.messageId);
+            console.log('Message sent: %s', info.response);
             
           })
           // .catch((error) => {
