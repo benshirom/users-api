@@ -14,7 +14,7 @@ const { validVerifyUser} = require("../validation/userVerifyValidation");
 let transporter = nodemailer.createTransport({
 
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 465,
   secure: true, // use SSL
   auth: {
     user: config.authEmail,
@@ -35,8 +35,8 @@ transporter.verify((error, success) => {
 })
 
 const sendVerificationEmail = async({ _id, email }, res) => {
-  console.log(email)
-  console.log(_id)
+  console.log("email"+email)
+  console.log("id"+_id)
   const currentUrl = "https://super-tan-rhinoceros.cyclic.app";
   const uniqueString = uuidv4() + _id;
 
