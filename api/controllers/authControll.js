@@ -35,8 +35,8 @@ transporter.verify((error, success) => {
 })
 
 const sendVerificationEmail = async({ _id, email }, res) => {
-  console.log("email"+email)
-  console.log("id"+_id)
+  console.log("email "+email)
+  console.log("id "+_id)
   const currentUrl = "https://super-tan-rhinoceros.cyclic.app";
   const uniqueString = uuidv4() + _id;
 
