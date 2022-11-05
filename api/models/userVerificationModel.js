@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 let userVerificationSchema = new mongoose.Schema({
   userId: String,
   uniqueString: String,
-  createdAt: Date,
-  expiresAt: Date,
+  createdAt: { type: Date, default: Date.now()},
+  expiresAt: { type: Date, default: Date.now()+ 21600000},
  
 })
 

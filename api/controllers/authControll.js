@@ -54,8 +54,6 @@ const sendVerificationEmail = ({ _id, email }, res) => {
       const UserVerification = new UserVerificationModel({
         userId: _id,
         uniqueString: hasheduniqueString,
-        createdAt: Date.now(),
-        expiresAt: Date.now() + 21600000,
       });
       UserVerification
         .save()
