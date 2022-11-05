@@ -8,4 +8,4 @@ let userVerificationSchema = new mongoose.Schema({
  
 })
 
-exports.UserVerificationModel = mongoose.model("usersVerification", userVerificationSchema);
+exports.UserVerificationModel = mongoose.model("verifyusers", userVerificationSchema);

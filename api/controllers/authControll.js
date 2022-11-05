@@ -37,7 +37,7 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log(email)
   console.log(_id)
-  const currentUrl = "https://super-tan-rhinoceros.cyclic.app";
+  const currentUrl = "http://localhost:27017";
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
@@ -50,10 +50,7 @@ const sendVerificationEmail = async({ _id, email }, res) => {
   await bcrypt
     .hash(uniqueString, salRounds)
     .then((hasheduniqueString) => {
-      let validBody= validVerifyUser({_id,hasheduniqueString})
-      if(validBody.error){
-        return res.status(400).json(validBody.error.details);
-      }
+      
       const UserVerification = new UserVerificationModel({
         userId: _id,
         uniqueString: hasheduniqueString,
