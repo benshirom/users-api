@@ -38,7 +38,7 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
-  const currentUrl = "http://localhost:27017";
+  const currentUrl = "https://userapiben.cyclic.app";
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
@@ -66,10 +66,10 @@ const sendVerificationEmail = async({ _id, email }, res) => {
             console.log('Message sent: %s', info.messageId);
             
           })
-            .catch((error) => {
-              // console.log(error)
-              res.status(401).json({ status: "failed", msg: "cant send email ,code:1" })
-            })
+          // .catch((error) => {
+          //     // console.log(error)
+          //     res.status(401).json({ status: "failed", msg: "cant send email ,code:1" })
+          //   })
         })
         .catch((error) => {
           console.log(error)
