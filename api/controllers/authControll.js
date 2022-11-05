@@ -45,7 +45,7 @@ const sendVerificationEmail = ({ _id, email }, res) => {
     from: config.authEmail,
     to: email,
     subject: "Verify Your Email",
-    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
+    html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
   };
   const salRounds = 10;
   bcrypt
