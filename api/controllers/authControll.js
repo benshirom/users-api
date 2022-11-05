@@ -7,14 +7,15 @@ const { createToken,mailOptions } = require("../helpers/userHelper");
 const { UserModel } = require("../models/userModel");
 const { validUser, validLogin } = require("../validation/userValidation");
 const { UserVerificationModel } = require("../models/userVerificationModel");
-const { validVerifyUser} = require("../validation/userVerifyValidation");
+// const { validVerifyUser} = require("../validation/userVerifyValidation");
 // export const API_URL = 'http://localhost:27017'
 // const currentUrl = "https://user-api-ptu9.onrender.com";
+const salRounds = 10;
 
 
 
 let transporter = nodemailer.createTransport({
-
+  
   host: 'smtp.gmail.com',
   port: 465,
   secure: true, // use SSL
@@ -33,22 +34,21 @@ transporter.verify((error, success) => {
     console.log("ready for messages");
     console.log("success");
   }
-
+  
 })
 
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
   const uniqueString = uuidv4() + _id;
-
+  
   // const mailOptions = {
-  //   from: config.authEmail,
-  //   to: email,
-  //   subject: "Verify Your Email",
-  //   html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
-  // };
-  const salRounds = 10;
-  await bcrypt
+    //   from: config.authEmail,
+    //   to: email,
+    //   subject: "Verify Your Email",
+    //   html: `<p>Verify Your Email </p><p> click <a href=${currentUrl+"/users/verify/"+_id+"/"+uniqueString}> here</a> </p>`
+    // };
+    await bcrypt
     .hash(uniqueString, salRounds)
     .then((hasheduniqueString) => {
       
@@ -96,7 +96,7 @@ exports.authCtrl = {
     }
     try {
       let user = new UserModel(req.body);
-      user.password = await bcrypt.hash(user.password, 10);
+      user.password = await bcrypt.hash(user.password, salRounds);
       await user.save();
       user.password = "***";
       sendVerificationEmail(user, res);
