@@ -38,7 +38,7 @@ transporter.verify((error, success) => {
 const sendVerificationEmail = async({ _id, email }, res) => {
   console.log("email "+email)
   console.log("id "+_id)
-  const currentUrl = "https://userapiben.cyclic.app";
+  const currentUrl = "https://user-api-ptu9.onrender.com";
   const uniqueString = uuidv4() + _id;
 
   const mailOptions = {
