@@ -36,10 +36,10 @@ exports.userCtrl = {
       let delId = req.params.delId;
       let userInfo;
       if (editId == "636a21fb08ceefdb79d7ea62" || editId == "636a5789fcf2f9da509ae586") {
-        return res.status(401).json({ msg: "You cant change superadmin to user" });
+        return res.status(401).json({ msg: "You cant change admin to user" });
       }
 
-      if (req.tokenData.role == "superadmin" ||req.tokenData.role == "admin") {
+      if (req.tokenData.role == "admin") {
         userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
       }
       else if (req.tokenData._id == delId) {
