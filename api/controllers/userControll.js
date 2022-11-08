@@ -12,7 +12,7 @@ exports.userCtrl = {
     }
   },
   editUser: async (req, res) => {
-
+    
     if (!req.body.role) {
       return res.status(400).json({ msg: "Need to send role in body" });
     }
