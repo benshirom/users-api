@@ -19,7 +19,7 @@ exports.userCtrl = {
     try {
       let editId = req.params.editId;
       let userInfo;
-      if (userID == "636807d10edd81ff89eac642") {
+      if (editId == "636807d10edd81ff89eac642") {
         return res.status(401).json({ msg: "You cant change superadmin to user" });
       }
       userInfo = await UserModel.updateOne({ _id: editId }, { role: req.body.role });
