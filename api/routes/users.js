@@ -10,5 +10,6 @@ router.get("/verify/:userId/:uniqueString",authCtrl.verifyUser)
 router.get("/verified",authCtrl.verifiedUser)
 router.get("/myInfo", auth, userCtrl.myInfo)
 router.delete("/:delId", auth, userCtrl.deleteUser)
+router.patch("/:editId", auth, userCtrl.editUser)
 router.get("/usersList", authAdmin, userCtrl.userList)
 module.exports = router;

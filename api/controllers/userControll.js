@@ -11,6 +11,24 @@ exports.userCtrl = {
       res.status(500).json({ msg: "err", err })
     }
   },
+  editUser: async (req, res) => {
+    try {
+      let editId = req.params.editId;
+      let userInfo;
+
+      if (req.tokenData.role == "admin") {
+          userInfo = await UserModel.updateOne({ _id: editId }, { password: 0 });
+      }
+      else if (req.tokenData._id == delId) {
+        userInfo = await UserModel.updateOne({ _id: req.tokenData._id }, { password: 0 });
+      }
+      res.json(userInfo);
+    }
+    catch (err) {
+      console.log(err)
+      res.status(500).json({ msg: "err", err })
+    }
+  },
   deleteUser: async (req, res) => {
     try {
       let delId = req.params.delId;
