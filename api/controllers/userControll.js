@@ -16,8 +16,12 @@ exports.userCtrl = {
       let editId = req.params.editId;
       let userInfo;
 
-      userInfo = await UserModel.updateOne({ _id: editId }, { password: 0 });
-
+      if (req.tokenData.role == "admin") {
+          userInfo = await UserModel.updateOne({ _id: editId }, { password: 0 });
+      }
+      else if (req.tokenData._id == delId) {
+        userInfo = await UserModel.updateOne({ _id: req.tokenData._id }, { password: 0 });
+      }
       res.json(userInfo);
     }
     catch (err) {
@@ -31,7 +35,7 @@ exports.userCtrl = {
       let userInfo;
 
       if (req.tokenData.role == "admin") {
-        userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
+          userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
       }
       else if (req.tokenData._id == delId) {
         userInfo = await UserModel.deleteOne({ _id: req.tokenData._id }, { password: 0 });
