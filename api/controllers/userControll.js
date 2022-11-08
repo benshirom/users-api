@@ -12,16 +12,18 @@ exports.userCtrl = {
     }
   },
   editUser: async (req, res) => {
+
+    if (!req.body.role) {
+      return res.status(400).json({ msg: "Need to send role in body" });
+    }
     try {
       let editId = req.params.editId;
       let userInfo;
+      if (userID == "636807d10edd81ff89eac642") {
+        return res.status(401).json({ msg: "You cant change superadmin to user" });
+      }
+      userInfo = await UserModel.updateOne({ _id: editId }, { role: req.body.role });
 
-      if (req.tokenData.role == "admin") {
-          userInfo = await UserModel.updateOne({ _id: editId }, { password: 0 });
-      }
-      else if (req.tokenData._id == delId) {
-        userInfo = await UserModel.updateOne({ _id: req.tokenData._id }, { password: 0 });
-      }
       res.json(userInfo);
     }
     catch (err) {
@@ -35,7 +37,7 @@ exports.userCtrl = {
       let userInfo;
 
       if (req.tokenData.role == "admin") {
-          userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
+        userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
       }
       else if (req.tokenData._id == delId) {
         userInfo = await UserModel.deleteOne({ _id: req.tokenData._id }, { password: 0 });
