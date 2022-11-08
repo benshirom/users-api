@@ -26,6 +26,7 @@ exports.authAdmin = (req, res, next) => {
     return res.status(401).json({ msg: "You need to send token to this endpoint url" })
   }
   try {
+    
     let decodeToken = jwt.verify(token, config.tokenSecret);
     // check if the role in the token of admin
     if (decodeToken.role != "admin") {
