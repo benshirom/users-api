@@ -19,7 +19,7 @@ exports.userCtrl = {
     try {
       let editId = req.params.editId;
       let userInfo;
-      if (editId == "636807d10edd81ff89eac642") {
+      if (editId == "636a21fb08ceefdb79d7ea62"||editId == "636a5789fcf2f9da509ae586") {
         return res.status(401).json({ msg: "You cant change superadmin to user" });
       }
       userInfo = await UserModel.updateOne({ _id: editId }, { role: req.body.role });
@@ -35,6 +35,9 @@ exports.userCtrl = {
     try {
       let delId = req.params.delId;
       let userInfo;
+      if (editId == "636a21fb08ceefdb79d7ea62"||editId == "636a5789fcf2f9da509ae586") {
+        return res.status(401).json({ msg: "You cant change superadmin to user" });
+      }
 
       if (req.tokenData.role == "admin") {
         userInfo = await UserModel.deleteOne({ _id: delId }, { password: 0 });
