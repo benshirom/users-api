@@ -122,8 +122,8 @@ exports.authCtrl = {
       let token = createToken(user._id, user.role);
       let data = {
         token: token,
-        userRole: user.role
-
+        userRole: user.role,
+        _id: user._id,
       }
       res.json(data);
     }
