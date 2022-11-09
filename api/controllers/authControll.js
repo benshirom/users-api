@@ -150,17 +150,17 @@ exports.authCtrl = {
                   .deleteone({ _id: userId })
                   .then(() => {
                     let message = "link hsa expired.please sigh up again ";
-                    res.redirect(`/users/verified/error=true&message=${message}`);
+                    res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
                   })
                   .catch((error) => {
                     let message = "clearing user with expired unique string failed ";
-                    res.redirect(`/users/verified/error=true&message=${message}`);
+                    res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
                   })
               })
               .catch((error) => {
                 console.log(error);
                 let message = "an error occurre while clearing  expired user verification record";
-                res.redirect(`/users/verified/error=true&message=${message}`);
+                res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
               })
           }
           else {
@@ -179,37 +179,37 @@ exports.authCtrl = {
                         .catch(error => {
                           console.log(error)
                           let message = "an error occurre while finalizing sucssful verification  ";
-                          res.redirect(`/users/verified/error=true&message=${message}`);
+                          res.redirect(`/users/verified/?error=true&message=${message}`);
                         })
                     }
                     )
                     .catch(error => {
                       console.log(error)
                       let message = "an error occurre while updating user verified ";
-                      res.redirect(`/users/verified/error=true&message=${message}`);
+                      res.redirect(`/users/verified/?error=true&message=${message}`);
                     })
 
                 } else {
                   let message = "invalid verification details passed.check your inbox.";
-                  res.redirect(`/users/verified/error=true&message=${message}`);
+                  res.redirect(`/users/verified/?error=true&message=${message}`);
                 }
               })
               .catch((error) => {
                 console.log(error)
                 let message = "an error occurre while compering unique strings ";
-                res.redirect(`/users/verified/error=true&message=${message}`);
+                res.redirect(`/users/verified/?error=true&message=${message}`);
               })
           }
 
         } else {
           let message = "Account   doesnt exist or has been verified already.please sign up or login in.";
-          res.redirect(`/users/verified/error=true&message=${message}`);
+          res.redirect(`/users/verified/?error=true&message=${message}`);
         }
       })
       .catch((error) => {
         console.log(error)
         let message = "an error occurre while checking for existing user Verification record ";
-        res.redirect(`/users/verified/error=true&message=${message}`);
+        res.redirect(`/users/verified/?error=true&message=${message}`);
       })
   },
   verifiedUser: async (req, res) => {
