@@ -4,6 +4,7 @@ const { auth, authAdmin } = require("../middlewares/auth");
 const router = express.Router();
 ///toys
 router.get("/", toyCtrl.getToy)
+router.get("/toybyid/:userId", auth, toyCtrl.toyByUserId)
 ///toys/prices?min=70&max=200
 router.get("/prices", toyCtrl.toysByPrice)
 // /toys/search?s=

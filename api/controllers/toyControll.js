@@ -38,6 +38,20 @@ exports.toyCtrl = {
       res.status(500).json({ msg: "there error try again later", err })
     }
   },
+  toyByUserId: async (req, res) => {
+    try {
+      let userId = req.params.userId;
+      let data;
+      
+     data = await ToyModel.find({ user_id: userId})
+      res.json(data);
+    }
+    catch (err) {
+      console.log(err);
+      res.status(500).json({ msg: "there error try again later", err })
+    }
+  }
+  ,
   toysByPrice: async (req, res) => {
     let perPage = req.query.perPage || 10;
     let page = req.query.page || 1;
