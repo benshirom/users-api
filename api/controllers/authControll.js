@@ -150,17 +150,17 @@ exports.authCtrl = {
                   .deleteone({ _id: userId })
                   .then(() => {
                     let message = "link hsa expired.please sigh up again ";
-                    res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
+                    res.redirect(`/users/verified/?error=true&message=${message}`);
                   })
                   .catch((error) => {
                     let message = "clearing user with expired unique string failed ";
-                    res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
+                    res.redirect(`/users/verified/?error=true&message=${message}`);
                   })
               })
               .catch((error) => {
                 console.log(error);
                 let message = "an error occurre while clearing  expired user verification record";
-                res.redirect(config.currentUrl+`/users/verified/?error=true&message=${message}`);
+                res.redirect(`/users/verified/?error=true&message=${message}`);
               })
           }
           else {
